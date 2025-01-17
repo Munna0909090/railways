@@ -1,152 +1,1412 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset='utf-8' />
-    <title>Indian Railways Longest Route</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
-    <script type="text/javascript" src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
-    <!-- <script src='stations.js'></script> -->
-    <script src='station_time.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Calculators</title>
     <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .calculator h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #calculatorList {
+            list-style: none;
+            padding: 0;
+        }
+        #calculatorList li {
+            margin-bottom: 10px;
+        }
+        #calculatorList a {
+            text-decoration: none;
+            color: #007bff;
+            cursor: pointer;
+        }
+        #calculatorList a:hover {
+            text-decoration: underline;
+        }
+ 
+    <ul id="calculatorList">
+        <li><a href="#" onclick="showCalculator('atalPensionCalculator')">Atal Pension Yojana Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('bikeEmiCalculator')">Bike EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('carLoanEmiCalculator')">Car Loan EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('homeLoanEmiCalculator')">Home Loan EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('fdCalculator')">Fixed Deposit (FD) Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('epfCalculator')">EPF Calculator</a></li>
+    </ul>
+
+    <div id="calculatorContainer">
+        <!-- Atal Pension Yojana Calculator -->
+        <div class="calculator" id="atalPensionCalculator" style="display: none;">
+            <h2>Atal Pension Yojana Calculator</h2>
+            <div class="form-group">
+                <label for="atalAge">Age:</label>
+                <input type="number" id="atalAge" placeholder="Enter your age" min="18" max="40">
+            </div>
+            <div class="form-group">
+                <label for="atalContribution">Monthly Contribution (INR):</label>
+                <input type="number" id="atalContribution" placeholder="Enter monthly contribution">
+            </div>
+            <button onclick="calculateAtalPension()">Calculate</button>
+            <div id="atalResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Bike EMI Calculator -->
+        <div class="calculator" id="bikeEmiCalculator" style="display: none;">
+            <h2>Bike EMI Calculator</h2>
+            <div class="form-group">
+                <label for="bikeLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="bikeLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="bikeInterestRate">Interest Rate (%):</label>
+                <input type="number" id="bikeInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="bikeTenure">Tenure (Months):</label>
+                <input type="number" id="bikeTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateBikeEmi()">Calculate</button>
+            <div id="bikeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Car Loan EMI Calculator -->
+        <div class="calculator" id="carLoanEmiCalculator" style="display: none;">
+            <h2>Car Loan EMI Calculator</h2>
+            <div class="form-group">
+                <label for="carLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="carLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="carInterestRate">Interest Rate (%):</label>
+                <input type="number" id="carInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="carTenure">Tenure (Months):</label>
+                <input type="number" id="carTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateCarLoanEmi()">Calculate</button>
+            <div id="carResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Home Loan EMI Calculator -->
+        <div class="calculator" id="homeLoanEmiCalculator" style="display: none;">
+            <h2>Home Loan EMI Calculator</h2>
+            <div class="form-group">
+                <label for="homeLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="homeLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="homeInterestRate">Interest Rate (%):</label>
+                <input type="number" id="homeInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="homeTenure">Tenure (Months):</label>
+                <input type="number" id="homeTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateHomeLoanEmi()">Calculate</button>
+            <div id="homeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Fixed Deposit Calculator -->
+        <div class="calculator" id="fdCalculator" style="display: none;">
+            <h2>Fixed Deposit (FD) Calculator</h2>
+            <div class="form-group">
+                <label for="fdAmount">Principal Amount (INR):</label>
+                <input type="number" id="fdAmount" placeholder="Enter principal amount">
+            </div>
+            <div class="form-group">
+                <label for="fdRate">Interest Rate (%):</label>
+                <input type="number" id="fdRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="fdTenure">Tenure (Years):</label>
+                <input type="number" id="fdTenure" placeholder="Enter tenure in years">
+            </div>
+            <button onclick="calculateFd()">Calculate</button>
+            <div id="fdResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- EPF Calculator -->
+        <div class="calculator" id="epfCalculator" style="display: none;">
+            <h2>EPF Calculator</h2>
+            <div class="form-group">
+                <label for="epfMonthlyContribution">Monthly Contribution (INR):</label>
+                <input type="number" id="epfMonthlyContribution" placeholder="Enter your monthly contribution">
+            </div>
+            <div class="form-group">
+                <label for="epfRate">Interest Rate (%):</label>
+                <input type="number" id="epfRate" placeholder="Enter annual interest rate">
+            </div>
+            <div class="form-group">
+                <label for="epfTenure">Tenure (Years):</label>
+                <input type="number" id="epfTenure" placeholder="Enter number of years">
+            </div>
+            <button onclick="calculateEpf()">Calculate</button>
+            <div id="epfResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function showCalculator(calculatorId) {
+            document.querySelectorAll('.calculator').forEach(calculator => {
+                calculator.style.display = 'none';
+            });
+            document.getElementById(calculatorId).style.display = 'block';
+        }
+
+        function calculateAtalPension() {
+            const age = parseFloat(document.getElementById('atalAge').value);
+            const contribution = parseFloat(document.getElementById('atalContribution').value);
+
+            if (isNaN(age) || isNaN(contribution) || age < 18 || age > 40) {
+                alert('Please enter valid age (18-40) and contribution.');
+                return;
+            }
+
+            const pensionAmount = contribution * 240;
+            document.getElementById('atalResult').style.display = 'block';
+            document.getElementById('atalResult').innerHTML = `<p><strong>Estimated Pension Amount:</strong> INR ${pensionAmount.toFixed(2)}</p>`;
+        }
+
+        function calculateBikeEmi() {
+            const loanAmount = parseFloat(document.getElementById('bikeLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('bikeInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('bikeTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) / (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('bikeResult').style.display = 'block';
+            document.getElementById('bikeResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateCarLoanEmi() {
+            const loanAmount = parseFloat(document.getElementById('carLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('carInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('carTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) / (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('carResult').style.display = 'block';
+            document.getElementById('carResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateHomeLoanEmi() {
+            const loanAmount = parseFloat(document.getElementById('homeLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('homeInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('homeTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) / (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('homeResult').style.display = 'block';
+            document.getElementById('homeResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateFd() {
+            const fdAmount = parseFloat(document.getElementById('fdAmount').value);
+            const fdRate = parseFloat(document.getElementById('fdRate').value) / 100;
+            const fdTenure = parseFloat(document.getElementById('fdTenure').value) * 12;
+
+            if (isNaN(fdAmount) || isNaN(fdRate) || isNaN(fdTenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const maturityAmount = fdAmount * Math.pow(1 + fdRate, fdTenure);
+
+            document.getElementById('fdResult').style.display = 'block';
+            document.getElementById('fdResult').innerHTML = `<p><strong>Maturity Amount:</strong> INR ${maturityAmount.toFixed(2)}</p>`;
+        }
+
+        function calculateEpf() {
+            const monthlyContribution = parseFloat(document.getElementById('epfMonthlyContribution').value);
+            const rate = parseFloat(document.getElementById('epfRate').value) / 100 / 12;
+            const tenure = parseFloat(document.getElementById('epfTenure').value) * 12;
+
+            if (isNaN(monthlyContribution) || isNaN(rate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const futureValue = monthlyContribution * ((Math.pow(1 + rate, tenure) - 1) / rate);
+
+            document.getElementById('epfResult').style.display = 'block';
+            document.getElementById('epfResult').innerHTML = `<p><strong>EPF Balance:</strong> INR ${futureValue.toFixed(2)}</p>`;
+        }
+ 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Style Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            padding: 20px;
+        }
+
+        .display {
+            width: 100%;
+            height: 60px;
+            font-size: 36px;
+            text-align: right;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            background-color: #f1f1f1;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .button {
+            background-color: #f1f1f1;
+            border: none;
+            font-size: 30px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .equal {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .equal:hover {
+            background-color: #45a049;
+        }
+
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .clear:hover {
+            background-color: #e53935;
+        }
+
+        .button:active {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(2px);
+        }
+
+        /* Special styling for iPhone look */
+        .button, .equal, .clear {
+            font-family: "Arial", sans-serif;
+        }
+
+    
+    <div class="calculator">
+        <input type="text" id="display" class="display" disabled>
+        <div class="buttons">
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '7'">7</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '8'">8</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '9'">9</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '+'">+</button>
+
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '4'">4</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '5'">5</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '6'">6</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '-'">-</button>
+
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '1'">1</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '2'">2</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '3'">3</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '*'">*</button>
+
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '0'">0</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '.'">.</button>
+            <button class="button clear" onclick="this.parentElement.parentElement.querySelector('#display').value = ''">C</button>
+            <button class="button" onclick="this.parentElement.parentElement.querySelector('#display').value += '/'">/</button>
+
+            <button class="button equal" onclick="this.parentElement.parentElement.querySelector('#display').value = eval(this.parentElement.parentElement.querySelector('#display').value)">=</button>
+        </div>
+    <
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .converter {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+     
+    <div class="converter">
+        <h2>Speed Converter</h2>
+        <label for="speed-value">Speed Value:</label>
+        <input type="number" id="speed-value" placeholder="Enter speed value" required>
+
+        <label for="from-unit">From Unit:</label>
+        <select id="from-unit">
+            <option value="kmh">Kilometers per Hour (km/h)</option>
+            <option value="mph">Miles per Hour (mph)</option>
+            <option value="ms">Meters per Second (m/s)</option>
+            <option value="knot">Knots (kn)</option>
+            <option value="ftsec">Feet per Second (ft/s)</option>
+            <option value="mach">Mach (mach)</option>
+            <option value="kmsec">Kilometers per Second (km/s)</option>
+            <option value="milesec">Miles per Second (mi/s)</option>
+            <option value="lightyearsec">Light Years per Second (ly/s)</option>
+            <option value="speedofsound">Speed of Sound (m/s)</option>
+        </select>
+
+        <label for="to-unit">To Unit:</label>
+        <select id="to-unit">
+            <option value="kmh">Kilometers per Hour (km/h)</option>
+            <option value="mph">Miles per Hour (mph)</option>
+            <option value="ms">Meters per Second (m/s)</option>
+            <option value="knot">Knots (kn)</option>
+            <option value="ftsec">Feet per Second (ft/s)</option>
+            <option value="mach">Mach (mach)</option>
+            <option value="kmsec">Kilometers per Second (km/s)</option>
+            <option value="milesec">Miles per Second (mi/s)</option>
+            <option value="lightyearsec">Light Years per Second (ly/s)</option>
+            <option value="speedofsound">Speed of Sound (m/s)</option>
+        </select>
+
+        <button onclick="convertSpeed()">Convert</button>
+        
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function convertSpeed() {
+            const speedValue = document.getElementById('speed-value').value;
+            const fromUnit = document.getElementById('from-unit').value;
+            const toUnit = document.getElementById('to-unit').value;
+
+            const conversionRates = {
+                'kmh': 1,
+                'mph': 1.60934,
+                'ms': 3.6,
+                'knot': 1.852,
+                'ftsec': 3.28084,
+                'mach': 340.29, // Speed of sound in m/s
+                'kmsec': 1000,
+                'milesec': 0.621371,
+                'lightyearsec': 3.24078e-17, // Approximation
+                'speedofsound': 1 // 1 m/s as speed of sound in standard conditions
+            };
+
+            if (!speedValue || isNaN(speedValue)) {
+                document.getElementById('result').innerHTML = 'Please enter a valid speed value.';
+                return;
+            }
+
+            // Convert input speed to km/h
+            let speedInKmH = speedValue * conversionRates[fromUnit];
+
+            // Convert km/h to target unit
+            let result = speedInKmH / conversionRates[toUnit];
+            document.getElementById('result').innerHTML = `${speedValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`;
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+       
+    <div class="calculator">
+        <h2>SIP Calculator</h2>
+        <label for="monthly-investment">Monthly Investment (₹):</label>
+        <input type="number" id="monthly-investment" class="input-field" placeholder="Enter monthly investment" required>
+
+        <label for="annual-return">Expected Annual Return (%):</label>
+        <input type="number" id="annual-return" class="input-field" placeholder="Enter expected return" required>
+
+        <label for="investment-duration">Investment Duration (Years):</label>
+        <input type="number" id="investment-duration" class="input-field" placeholder="Enter duration in years" required>
+
+        <button class="btn" onclick="calculateSIP()">Calculate</button>
+
+        <div id="result" class="result" style="display: none;">
+            <p id="future-value"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateSIP() {
+            const P = parseFloat(document.getElementById("monthly-investment").value); // Monthly investment
+            const r = parseFloat(document.getElementById("annual-return").value) / 100 / 12; // Monthly interest rate
+            const n = parseFloat(document.getElementById("investment-duration").value) * 12; // Duration in months
+
+            if (isNaN(P) || isNaN(r) || isNaN(n) || P <= 0 || r <= 0 || n <= 0) {
+                alert("Please enter valid values.");
+                return;
+            }
+
+            const FV = P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r); // Future Value formula
+
+            document.getElementById("result").style.display = "block";
+            document.getElementById("future-value").textContent = "Future Value of your investment: ₹" + FV.toFixed(2);
+     a charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loss Ratio Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            max-width: 400px;
+            margin: auto;
+        }
+        .calculator h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+   
+    <div class="calculator">
+        <h2>Loss Ratio Calculator</h2>
+
+        <div class="form-group">
+            <label for="claimsIncurred">Claims Incurred (INR):</label>
+            <input type="number" id="claimsIncurred" placeholder="Enter claims incurred">
+        </div>
+
+        <div class="form-group">
+            <label for="premiumsEarned">Premiums Earned (INR):</label>
+            <input type="number" id="premiumsEarned" placeholder="Enter premiums earned">
+        </div>
+
+        <button onclick="calculateLossRatio()">Calculate Loss Ratio</button>
+
+        <div id="lossRatioResult" class="result" style="display: none;">
+            <p><strong>Loss Ratio:</strong> <span id="lossRatioValue"></span>%</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateLossRatio() {
+            const claimsIncurred = parseFloat(document.getElementById('claimsIncurred').value);
+            const premiumsEarned = parseFloat(document.getElementById('premiumsEarned').value);
+
+            if (isNaN(claimsIncurred) || isNaN(premiumsEarned) || premiumsEarned === 0) {
+                alert('Please enter valid values for claims and premiums, and ensure premiums are not zero.');
+                return;
+            }
+
+            const lossRatio = (claimsIncurred / premiumsEarned) * 100;
+
+            document.getElementById('lossRatioValue').innerText = lossRatio.toFixed(2);
+            document.getElementById('lossRatioResult').style.display = 'block';
+        }
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .input, .select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .dial-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dial-button {
+            padding: 20px;
+            font-size: 1.5em;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .dial-button:hover {
+            background-color: #0051a2;
+            transform: scale(1.1);
+        }
+
+        .dial-button:active {
+            background-color: #003f8a;
+        }
+
+        .label {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        /* New blur color effect for CGST and SGST */
+        #gst-breakdown {
+            color: #ff6347; /* Set the text color */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Adding the blur effect */
+        }
+
+        /* Small icon for BHURAGAON */
+        .logo {
+            font-size: 14px;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: red; /* Red color for BHURAGAON */
+        }
+
+        #gst-result {
+            color: red; /* Red color for GST Amount */
+        }
+
+        .clear-button {
+            padding: 12px;
+            font-size: 1.2em;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .clear-button:hover {
+            background-color: darkred;
+        }
     </style>
 </head>
 <body>
+    <div class="logo">BHURAGAON</div>
+    <div class="container">
+        <h1>GST Calculator</h1>
+        
+        <div class="result" id="gst-result">GST Amount: ₹0.00</div>
+        <div class="result" id="gst-breakdown">CGST: ₹0.00 | SGST: ₹0.00</div>
+        <div class="result" id="amount-without-gst">Amount Without GST: ₹0.00</div>
+        <div class="result" id="amount-with-gst">Amount With GST: ₹0.00</div>
 
-<div id='map'></div>
-<script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
-var map = new mapboxgl.Map({
-    container: 'map', // container id
-    style: 'mapbox://styles/geohacker/cim0ng7dq00jxcglvn6jsjiqs', //stylesheet location
-    center: [82.705, 21.841], // starting position
-    zoom: 4, // starting zoom
-    hash: true,
-    minZoom: 4
-});
+        <label class="label">Select GST Type</label>
+        <select class="select" id="tax-type" onchange="autoCalculateGST()">
+            <option value="CGST-SGST">CGST and SGST</option>
+            <option value="IGST">IGST</option>
+        </select>
 
-var index = 0;
-var start = null;
-map.on('style.load', function () {
+        <label class="label">Select GST Rate</label>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <select class="select" id="gst-rate" onchange="autoCalculateGST()" style="flex: 1;">
+                <option value="0">0%</option>
+                <option value="5">5%</option>
+                <option value="12">12%</option>
+                <option value="18">18%</option>
+                <option value="28">28%</option>
+            </select>
+            <button class="clear-button" onclick="clearGST()">Clear</button>
+        </div>
 
-    map.addSource('point', {
-        "type": "geojson",
-        "data": station_time.features[0]
-    });
+        <input class="input" type="text" id="transaction-amount" placeholder="Enter amount" oninput="autoCalculateGST()" />
 
-   map.addLayer({
-        "id": "point",
-        "source": "point",
-        "type": "circle",
-        "paint": {
-            "circle-radius": 10,
-            "circle-color": "#050df2",
-            "circle-blur": 1
-        },
-    });
+        <!-- Dial Pad -->
+        <div class="dial-pad">
+            <button class="dial-button" onclick="appendNumber(1)">1</button>
+            <button class="dial-button" onclick="appendNumber(2)">2</button>
+            <button class="dial-button" onclick="appendNumber(3)">3</button>
+            <button class="dial-button" onclick="appendNumber(4)">4</button>
+            <button class="dial-button" onclick="appendNumber(5)">5</button>
+            <button class="dial-button" onclick="appendNumber(6)">6</button>
+            <button class="dial-button" onclick="appendNumber(7)">7</button>
+            <button class="dial-button" onclick="appendNumber(8)">8</button>
+            <button class="dial-button" onclick="appendNumber(9)">9</button>
+            <button class="dial-button" onclick="appendDecimal()">.</button>
+            <button class="dial-button" onclick="appendNumber(0)">0</button>
+            <button class="dial-button" onclick="deleteLastDigit()">←</button>
+        </div>
+    </div>
 
-   map.addLayer({
-        "id": "pointInner",
-        "source": "point",
-        "type": "circle",
-        "paint": {
-            "circle-radius": 2,
-            "circle-color": "white"
-        },
-    });
+    <script>
+        let currentAmount = "";
 
-   map.addLayer({
-        "id": "pointLabel",
-        "source": "point",
-        "type": "symbol",
-        "layout": {
-            "text-field": "{name}, {time}, Day {day}",
-            "text-size": 12,
-            "text-anchor": "left",
-            "text-font": ["Open Sans Semibold"],
-            "text-max-width": 15
-        },
-        "paint": {
-            "text-translate": [5, 0],
-            "text-halo-color": "white",
-            "text-halo-width": 1
-        }
-    });
-
-    generatePoints();
-
-});
-
-function animateMarker(timestamp) {
-    if (!start) start = timestamp;
-
-    var interval =  timestamp - start;
-
-    if (interval > 1300) {
-
-        start = timestamp;
-        if (index === route.features.length) {
-            index = 0;
+        function appendNumber(num) {
+            currentAmount += num;
+            document.getElementById('transaction-amount').value = currentAmount;
+            autoCalculateGST();
         }
 
-        var currentPoint = getPoint();
-        if (currentPoint.properties.name) {
-
+        function appendDecimal() {
+            if (!currentAmount.includes('.')) {
+                currentAmount += '.';
+                document.getElementById('transaction-amount').value = currentAmount;
+                autoCalculateGST();
+            }
         }
-        map.getSource('point').setData(currentPoint);
-            index = index + 1;
+
+        function deleteLastDigit() {
+            currentAmount = currentAmount.slice(0, -1);
+            document.getElementById('transaction-amount').value = currentAmount;
+            autoCalculateGST();
         }
 
-        // Request the next frame of the animation.
-        requestAnimationFrame(animateMarker);
-}
+        function autoCalculateGST() {
+            const amountWithGST = parseFloat(document.getElementById('transaction-amount').value) || 0;
+            const gstRate = parseFloat(document.getElementById('gst-rate').value);
+            const taxType = document.getElementById('tax-type').value;
 
-function getPoint() {
-    return route.features[index];
-}
+            const amountWithoutGST = amountWithGST / (1 + gstRate / 100);
+            const gstAmount = amountWithGST - amountWithoutGST;
 
-var route = {
-    "type": "FeatureCollection",
-    "features": []
-};
+            let cgstAmount = 0, sgstAmount = 0;
+            if (taxType === 'CGST-SGST') {
+                cgstAmount = gstAmount / 2;
+                sgstAmount = gstAmount / 2;
+            } else if (taxType === 'IGST') {
+                cgstAmount = gstAmount;
+                sgstAmount = 0;
+            }
 
-function generatePoints() {
-
-    var stationsLength = station_time.features.length;
-    for (var i = 0; i < stationsLength; i++) {
-        var time = station_time.features[i].properties.time.split(':');
-        var splitTime = time[0] + ":" + time[1];
-        station_time.features[i].properties.time = splitTime;
-
-        route.features.push(station_time.features[i]);
-
-        if (i !== stationsLength -1) {
-            var point1 = station_time.features[i];
-            var point2 = station_time.features[i+1];
-            var midpoint = turf.midpoint(point1, point2);
-            var midpoint2 = turf.midpoint(midpoint, point2);
-            // route.features.push(midpoint);
-            // route.features.push(midpoint2);
+            updateDisplay(amountWithGST, amountWithoutGST, gstAmount, cgstAmount, sgstAmount);
         }
-    }
 
-    animateMarker(0);
-}
+        function updateDisplay(amountWithGST, amountWithoutGST, gstAmount, cgstAmount, sgstAmount) {
+            document.getElementById('gst-result').innerText = `GST Amount: ₹${gstAmount.toFixed(2)}`;
+            document.getElementById('amount-without-gst').innerText = `Amount Without GST: ₹${amountWithoutGST.toFixed(2)}`;
+            document.getElementById('amount-with-gst').innerText = `Amount With GST: ₹${amountWithGST.toFixed(2)}`;
+            document.getElementById('gst-breakdown').innerText = `CGST: ₹${cgstAmount.toFixed(2)} | SGST: ₹${sgstAmount.toFixed(2)}`;
+        }
 
-// Google Analytics
+        function clearGST() {
+            document.getElementById('transaction-amount').value = ""; // Clear only the transaction amount
+            currentAmount = ""; // Reset the currentAmount variable
+            autoCalculateGST(); // Recalculate with the empty input, which will reset all calculations
+        }
+ 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Calculators</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .calculator h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #calculatorList {
+            list-style: none;
+            padding: 0;
+        }
+        #calculatorList li {
+            margin-bottom: 10px;
+        }
+        #calculatorList a {
+            text-decoration: none;
+            color: #007bff;
+            cursor: pointer;
+        }
+        #calculatorList a:hover {
+            text-decoration: underline;
+        }
+    
+    <h1>Financial Calculators</h1>
 
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <ul id="calculatorList">
+        <li><a href="#" onclick="showCalculator('atalPensionCalculator')">Atal Pension Yojana Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('bikeEmiCalculator')">Bike EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('carLoanEmiCalculator')">Car Loan EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('homeLoanEmiCalculator')">Home Loan EMI Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('fdCalculator')">Fixed Deposit (FD) Calculator</a></li>
+        <li><a href="#" onclick="showCalculator('epfCalculator')">EPF Calculator</a></li>
+    </ul>
 
-ga('create', 'UA-75475863-1', 'auto');
-ga('send', 'pageview');
+    <div id="calculatorContainer">
+        <!-- Atal Pension Yojana Calculator -->
+        <div class="calculator" id="atalPensionCalculator" style="display: none;">
+            <h2>Atal Pension Yojana Calculator</h2>
+            <div class="form-group">
+                <label for="atalAge">Age:</label>
+                <input type="number" id="atalAge" placeholder="Enter your age" min="18" max="40">
+            </div>
+            <div class="form-group">
+                <label for="atalContribution">Monthly Contribution (INR):</label>
+                <input type="number" id="atalContribution" placeholder="Enter monthly contribution">
+            </div>
+            <button onclick="calculateAtalPension()">Calculate</button>
+            <div id="atalResult" class="result" style="display: none;"></div>
+        </div>
 
-</script>
+        <!-- Bike EMI Calculator -->
+        <div class="calculator" id="bikeEmiCalculator" style="display: none;">
+            <h2>Bike EMI Calculator</h2>
+            <div class="form-group">
+                <label for="bikeLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="bikeLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="bikeInterestRate">Interest Rate (%):</label>
+                <input type="number" id="bikeInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="bikeTenure">Tenure (Months):</label>
+                <input type="number" id="bikeTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateBikeEmi()">Calculate</button>
+            <div id="bikeResult" class="result" style="display: none;"></div>
+        </div>
 
+        <!-- Car Loan EMI Calculator -->
+        <div class="calculator" id="carLoanEmiCalculator" style="display: none;">
+            <h2>Car Loan EMI Calculator</h2>
+            <div class="form-group">
+                <label for="carLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="carLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="carInterestRate">Interest Rate (%):</label>
+                <input type="number" id="carInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="carTenure">Tenure (Months):</label>
+                <input type="number" id="carTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateCarLoanEmi()">Calculate</button>
+            <div id="carResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Home Loan EMI Calculator -->
+        <div class="calculator" id="homeLoanEmiCalculator" style="display: none;">
+            <h2>Home Loan EMI Calculator</h2>
+            <div class="form-group">
+                <label for="homeLoanAmount">Loan Amount (INR):</label>
+                <input type="number" id="homeLoanAmount" placeholder="Enter loan amount">
+            </div>
+            <div class="form-group">
+                <label for="homeInterestRate">Interest Rate (%):</label>
+                <input type="number" id="homeInterestRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="homeTenure">Tenure (Months):</label>
+                <input type="number" id="homeTenure" placeholder="Enter tenure in months">
+            </div>
+            <button onclick="calculateHomeLoanEmi()">Calculate</button>
+            <div id="homeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Fixed Deposit Calculator -->
+        <div class="calculator" id="fdCalculator" style="display: none;">
+            <h2>Fixed Deposit (FD) Calculator</h2>
+            <div class="form-group">
+                <label for="fdAmount">Principal Amount (INR):</label>
+                <input type="number" id="fdAmount" placeholder="Enter principal amount">
+            </div>
+            <div class="form-group">
+                <label for="fdRate">Interest Rate (%):</label>
+                <input type="number" id="fdRate" placeholder="Enter interest rate">
+            </div>
+            <div class="form-group">
+                <label for="fdTenure">Tenure (Years):</label>
+                <input type="number" id="fdTenure" placeholder="Enter tenure in years">
+            </div>
+            <button onclick="calculateFd()">Calculate</button>
+            <div id="fdResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- EPF Calculator -->
+        <div class="calculator" id="epfCalculator" style="display: none;">
+            <h2>EPF Calculator</h2>
+            <div class="form-group">
+                <label for="epfMonthlyContribution">Monthly Contribution (INR):</label>
+                <input type="number" id="epfMonthlyContribution" placeholder="Enter your monthly contribution">
+            </div>
+            <div class="form-group">
+                <label for="epfRate">Interest Rate (%):</label>
+                <input type="number" id="epfRate" placeholder="Enter annual interest rate">
+            </div>
+            <div class="form-group">
+                <label for="epfTenure">Tenure (Years):</label>
+                <input type="number" id="epfTenure" placeholder="Enter number of years">
+            </div>
+            <button onclick="calculateEpf()">Calculate</button>
+            <div id="epfResult" class="result" style="display: none;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        function showCalculator(calculatorId) {
+            document.querySelectorAll('.calculator').forEach(calculator => {
+                calculator.style.display = 'none';
+            });
+            document.getElementById(calculatorId).style.display = 'block';
+        }
+
+        function calculateAtalPension() {
+            const age = parseFloat(document.getElementById('atalAge').value);
+            const contribution = parseFloat(document.getElementById('atalContribution').value);
+
+            if (isNaN(age) || isNaN(contribution) || age < 18 || age > 40) {
+                alert('Please enter valid age (18-40) and contribution.');
+                return;
+            }
+
+            const pensionAmount = contribution * 240;
+            document.getElementById('atalResult').style.display = 'block';
+            document.getElementById('atalResult').innerHTML = `<p><strong>Estimated Pension Amount:</strong> INR ${pensionAmount.toFixed(2)}</p>`;
+        }
+
+        function calculateBikeEmi() {
+            const loanAmount = parseFloat(document.getElementById('bikeLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('bikeInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('bikeTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) /
+                        (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('bikeResult').style.display = 'block';
+            document.getElementById('bikeResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateCarLoanEmi() {
+            const loanAmount = parseFloat(document.getElementById('carLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('carInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('carTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) /
+                        (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('carResult').style.display = 'block';
+            document.getElementById('carResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateHomeLoanEmi() {
+            const loanAmount = parseFloat(document.getElementById('homeLoanAmount').value);
+            const interestRate = parseFloat(document.getElementById('homeInterestRate').value) / 12 / 100;
+            const tenure = parseFloat(document.getElementById('homeTenure').value);
+
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const emi = (loanAmount * interestRate * Math.pow(1 + interestRate, tenure)) /
+                        (Math.pow(1 + interestRate, tenure) - 1);
+
+            document.getElementById('homeResult').style.display = 'block';
+            document.getElementById('homeResult').innerHTML = `<p><strong>Monthly EMI:</strong> INR ${emi.toFixed(2)}</p>`;
+        }
+
+        function calculateFd() {
+            const principal = parseFloat(document.getElementById('fdAmount').value);
+            const rate = parseFloat(document.getElementById('fdRate').value) / 100;
+            const tenure = parseFloat(document.getElementById('fdTenure').value);
+
+            if (isNaN(principal) || isNaN(rate) || isNaN(tenure)) {
+                alert('Please enter valid inputs.');
+                return;
+            }
+
+            const maturityAmount = principal * Math.pow(1 + rate, tenure);
+
+            document.getElementById('fdResult').style.display = 'block';
+            document.getElementById('fdResult').innerHTML = `<p><strong>Maturity Amount:</strong> INR ${maturityAmount.toFixed(2)}</p>`;
+        }
+
+        function calculateEpf() {
+            const monthlyContribution = parseFloat(document.getElementById('epfMonthlyContribution').value);
+            const annualInterestRate = parseFloat(document.getElementById('epfRate').value);
+            const tenureYears = parseFloat(document.getElementById('epfTenure').value);
+
+            if (isNaN(monthlyContribution) || isNaN(annualInterestRate) || isNaN(tenureYears)) {
+                alert('Please enter valid numbers');
+                return;
+            }
+
+            const monthlyRate = annualInterestRate / 12 / 100;
+            const months = tenureYears * 12;
+
+            let maturityAmount = 0;
+            for (let i = 0; i < months; i++) {
+                maturityAmount += monthlyContribution * Math.pow(1 + monthlyRate, months - i);
+            }
+
+            document.getElementById('epfResult').style.display = 'block';
+            document.getElementById('epfResult').innerHTML = `<p><strong>Maturity Amount:</strong> INR ${maturityAmount.toFixed(2)}</p>`;
+ 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .converter {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            padding: 30px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        select {
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+    
+    <div class="converter">
+        <h2>Currency Converter</h2>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" class="input-field" placeholder="Enter amount to convert">
+        
+        <label for="from-currency">From Currency:</label>
+        <select id="from-currency" class="input-field">
+            <!-- Dynamic content will be inserted here -->
+        </select>
+
+        <label for="to-currency">To Currency:</label>
+        <select id="to-currency" class="input-field">
+            <!-- Dynamic content will be inserted here -->
+        </select>
+
+        <button class="btn" onclick="convertCurrency()">Convert</button>
+        
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const apiKey = '85b4bbf9a94db32faa330275';  // Your API Key
+
+        // Fetch countries and currencies from an external API
+        async function fetchCurrencies() {
+            const url = `https://v6.exchangerate-api.com/v6/${apiKey}/codes`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.result === 'success') {
+                    const currencies = data.supported_codes;
+                    populateDropdown(currencies);
+                } else {
+                    alert('Error fetching currency data');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Populate dropdown lists with currency codes
+        function populateDropdown(currencies) {
+            const fromCurrencySelect = document.getElementById('from-currency');
+            const toCurrencySelect = document.getElementById('to-currency');
+
+            currencies.forEach(currency => {
+                const optionFrom = new Option(currency[0], currency[0]);
+                fromCurrencySelect.add(optionFrom);
+                const optionTo = new Option(currency[0], currency[0]);
+                toCurrencySelect.add(optionTo);
+            });
+        }
+
+        // Convert currency based on selection
+        async function convertCurrency() {
+            const amount = document.getElementById('amount').value;
+            const fromCurrency = document.getElementById('from-currency').value;
+            const toCurrency = document.getElementById('to-currency').value;
+
+            const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${fromCurrency}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const rate = data.conversion_rates[toCurrency];
+                const convertedAmount = amount * rate;
+                document.getElementById('result').innerText = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+            } catch (error) {
+                document.getElementById('result').innerText = 'Error fetching data.';
+            }
+        }
+
+        // Load currencies on page load
+        window.onload = fetchCurrencies;
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax and Salary Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .calculator h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+ 
+    <div class="calculator">
+        <h2>Tax and Salary Calculator</h2>
+        <div class="form-group">
+            <label for="grossSalary">Gross Salary (INR):</label>
+            <input type="number" id="grossSalary" placeholder="Enter your gross salary in INR">
+        </div>
+        <div class="form-group">
+            <label for="taxRate">Tax Percentage (%):</label>
+            <input type="number" id="taxRate" placeholder="Enter tax percentage">
+        </div>
+        <button onclick="calculateSalary()">Calculate</button>
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function calculateSalary() {
+            const grossSalary = parseFloat(document.getElementById('grossSalary').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value);
+
+            if (isNaN(grossSalary) || isNaN(taxRate)) {
+                alert('Please enter valid numbers');
+                return;
+            }
+
+            const taxAmount = (grossSalary * taxRate) / 100;
+            const netSalary = grossSalary - taxAmount;
+
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').innerHTML = `
+                <p><strong>Tax Amount:</strong> INR ${taxAmount.toFixed(2)}</p>
+                <p><strong>Net Salary:</strong> INR ${netSalary.toFixed(2)}</p>
+            `;
+        }
+    </script>
 </body>
 </html>
